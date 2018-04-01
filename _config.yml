@@ -13,10 +13,15 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://veinin.com
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
+
+sitemap: 
+    path: sitemap.xml
+baidusitemap:
+    path: baidusitemap.xml
 
 # Directory
 source_dir: source
