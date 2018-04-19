@@ -318,7 +318,7 @@ Changes to be committed:
 $ git rm --cached README
 ```
 
-git rm` 命令后面可以列出文件或者目录的名字，也可以使用 glob 模式。 比方说：
+`git rm` 命令后面可以列出文件或者目录的名字，也可以使用 glob 模式。 比方说：
 
 ```
 $ git rm log/\*.log

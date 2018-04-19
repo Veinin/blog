@@ -1,3 +1,1 @@
 This blog is built using Hexo. A fast, simple & powerful blog framework.
-
-test...
