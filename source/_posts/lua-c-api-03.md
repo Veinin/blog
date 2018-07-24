@@ -4,7 +4,6 @@ date: 2017-08-06 22:15:58
 categories: Lua
 tags: [Lua, Lua C API]
 ---
-# Lua C API 教程 - 从 Lua 调用 C 函数
 
 前一篇文章介绍了怎么从 C 程序中调用 Lua 代码。但内容并没有深入，还有很多东西需要反复去尝试，并且需要通过 Lua 辅助来调用 C 程序。 本章将着重介绍如何继续扩展你的 Lua 程序 - 在Lua中调用C函数。
 
@@ -12,15 +11,15 @@ tags: [Lua, Lua C API]
 
 从 Lua 的角度来看，调用 C 程序其实就是调用一个模块，在Lua中一个代码块称为chunk，一个chunk里面通常有若干函数，这些函数用table存储。而Lua的C扩展模块也是可以这样实现的，Lua调用C函数时，并不依赖于函数名、包的位置，而只依赖于注册函数时传入的函数地址。
 
-<!--more-->
-
 一个简单的 Lua 程序，调用一个包含了 `foo` 和 `bar` 函数的 `mylib` 模块：
 
 ```lua
 local mylib = require "mylib"
-mylib.foo()
-mylib.bar()
+print(mylib.foo())
+print(mylib.bar())
 ```
+
+<!--more-->
 
 上面的代码 `require "mylib"` 语句加载了一个名为 `mylib` 的模块，显然模块具有函数 `foo` 和 `bar`。所以 C 程序不仅需要定义 `foo()` 和 `bar()` 函数，还需要将自己注册为一个模块，并将函数注入模块当中。
 
@@ -32,12 +31,16 @@ mylib.bar()
 通常，创建 C 模块时，函数都是私有的，都声明为static。一个模块函数定义大概是这样子：
 
 ```c
-static int foo(lua_State *L) {
-    //do something...
+static int foo(lua_State *L)
+{
+    lua_pushstring(L, "foo...")
+    return 1;
 }
 
-static int bar(lua_State *L) {
-    //do something...
+static int bar(lua_State *L)
+{
+    lua_pushstring(L, "bar...");
+    return 1;
 }
 ```
 
@@ -144,4 +147,3 @@ cube(), num = 2.500000
 ## 更进一步
 
 如果你已经和 Lua 一起工作过一段时间后，你一个会注意到 Lua 没有内置 `sleep()` 延迟函数。一种解决方案是调用 C 的 `sleep()` 函数。我们做的是需要实现两个名为 `sleep()` 和 `msleep` 和函数来让 Lua 代码延迟指定多少秒、多少毫秒。
-
