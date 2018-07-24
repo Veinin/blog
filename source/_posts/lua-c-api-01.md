@@ -7,18 +7,21 @@ tags: [Lua, Lua C API]
 
 Lua 的 C API 是一个 C 代码与 Lua 进行交互的函数集，也就是宿主程序跟 Lua 通讯用的一组 C 函数。它由以下部分组成：读写Lua全局变量的函数，调用Lua函数的函数，运行 Lua 代码片段的函数，注册 C 函数然后可以在 Lua 中被调用的函数，等等。
 
-<!--more-->
-
 ## 头文件
+
 在任何调用Lua的 C程序中都必选包含以下3个文件 ：
-```
-#include <lua.h> 
-#include <lauxlib.h> 
+
+```c
+#include <lua.h>
+#include <lauxlib.h>
 #include <lualib.h>
 ```
 
+<!--more-->
+
 如果是 C++ 程序，请包含头文件 `lua.hpp`, 这个文件实际上也是引入了上面 3 头文件，它看起来是这样的：
-```
+
+```c
 extern "C" {
 #include "lua.h"
 #include "lualib.h"
@@ -30,6 +33,7 @@ extern "C" {
 而另一个相关头文件 `lauxlib.h` 则是API接口的一个辅助库（auxlib），其中定义的函数都以luaL_开头（如lual_loadbuffer），辅助库利用了lua.h中提供的基础函数提供了更高层次的抽象。auxlib 没有存取 Lua 内部的权限，它所完成的所有工作都是通过正式的基本 API。
 
 ## 编译和连接
+
 没有比编译和连接你的第一个 C 程序更难的事情了。在编译之前你需要了解一些编译选项，下面是一些典型的编译命令：
 
 - `cc`，你系统里面的 C 代码编译器，它可以是 `cc` 、 `gcc` 或其他的编译器。
@@ -42,9 +46,10 @@ extern "C" {
 - `-lm`，数学库的链接。
 
 ## 第一个示例程序
+
 实现一个独立的 Lua 解释器。
 
-```
+```c
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -82,6 +87,7 @@ Lua 中没用定义任何全局变量，它所有状态都保存在动态结构l
 当状态机标准库载入后，对于用户输入的每一行，C 程序首先调用 `luaL_loadstring` 将字符串加载为 Lua 代码块，并通过 `lua_pcall` 以保护模式运行从chunk中调用返回的代码。`lua_pcall` 在没有错误的情况下返回0，如有错误发送，错误信息将被压入栈中，我们可以通过 `lua_tostring` 来得到这条信息，输出它，最后调用 `lua_pop` 将它从栈中删除。
 
 ### 编译、运行
+
 ``` shell
 $ cc -o first first.c -I/usr/local/include -L/usr/local/lib -llua -lm
 $ ./first
@@ -93,11 +99,14 @@ hehe
 ```
 
 ## 栈
+
 当 Lua 与 C 之间交换数据时我们面临两个问题，一个是动态与静态类型系统的不匹配，另一个则是自动和手动内存管理的不一致。
 Lua 使用一个虚拟栈来与 C 互相传值，栈上的的每个元素都是一个 Lua 值。第一次调用 Lua 时，首先值会压入栈中，然后调用 Lua （这个值会被弹出），我们要做的就是把值按类型用不同的函数压入栈中，然后再用相应的函数把值从栈中取出。当然，对于栈来说，它始终遵循 `LIFO` 规则，你可以自由的查询栈上的任何元素，也可以在任何位置插入和删除元素。
 
 ### 压入元素
+
 API 有一系列的压入函数，如空值: `lua_pushnil()`、整数 `lua_pushnumber()`、任意字符串 `lua_pushlstring()`、C风格字符串 `lua_pushstring()` ...
+
 ``` c
 void lua_pushnil(lua_State *L);
 void lua_pushboolean(lua_State *L, int bool);
@@ -109,19 +118,23 @@ void lua_pushstring(lua_State *L, const char * s);
 ```
 
 当你使用 Lua API 时， 就有责任保证做恰当的调用。 特别需要注意的是， 你有责任控制不要堆栈溢出。 你可以使用 `lua_checkstack` 这个函数来扩大可用堆栈的尺寸。无论你何时从 C 调用 Lua，都要保证栈空间至少有 `LUA_MINSTACK` 大小的空闲，这个值定义在了 `lua.h` 中，通常位20。因此，只要你不是不断的把数据压栈， 通常你不用关心堆栈大小。
+
 ``` c
 int lua_checkstack(lua_State *L, int sz);
 ```
 
 ### 查询元素
+
 栈中的元素通过索引值查询，第一个元素索引为 1，最后一个元素位 n。当索引值为负时，从栈顶开始找，如 -1 也可以表示最后一个元素，-2 指栈顶的前一个元素。例如可以调用 `lua_tostring(L, -1)` 来调用栈顶元素。
 Lua C API 提供了一套 `lua_is*` 函数来检查指定类型的值，如 `lua_isnumber`，`lua_isstring` 等，这些函数只检查是否能转换成指定类型。
-```
+
+```c
 int lua_is...(lua_State *L, int index);
 ```
 
 最后，还有一个的 lua_type 函数，它返回栈中元素的类型。在 `lua.h` 中，每种类型都定义了一个常量 `LUA_TNIL` 、`LUA_TBOOLEAN` 、`LUA_TNUMBER` 、`LUA_TSTRING` 、`LUA_TTABLE` 、`LUA_TFUNCTION` 、`LUA_TUSERDATA` 。
 为了从栈中获取值，还提供了每种类值相对的 `lua_to*` 函数。如给定元素不正确则返回 0 或 NULL。
+
 ``` c
 int          lua_toboolean(lua_State *L, int index);
 lua_Number   lua_tonumber(lua_State *L, int index);
@@ -132,6 +145,7 @@ size_t       lua_strlen(lua_State *L, int index);
 ```
 
 在检查一个类型值时，通常你需要用 `lua_is*` 函数来检查，但在Lua 5.2 中新增了如下 `lua_to*` 函数，在传入值 `isnum`，如果 `isnum` 不是 `NULL` ， `*isnum` 会被设为操作是否成功。
+
 ``` c
 lua_Number   lua_tonumberx(lua_State *L, int index, int *isnum);
 lua_Integer  lua_tointegerx(lua_State *L, int index, int *isnum);
@@ -139,7 +153,9 @@ lua_Unsigned lua_tounsignedx(lua_State *L, int index, int *isnum);
 ```
 
 ### 其他栈操作
+
 除了上面所列的栈操作函数，在 C 和 Lua 交换值时，我们还可以通过以下 API 来对栈进行操作：
+
 ``` c
 int  lua_gettop(lua_State *L);
 void lua_settop(lua_State *L, int index);
@@ -165,6 +181,7 @@ void lua_pop(lua_State *L, int n);
 ```
 
 ### 栈操作实例
+
 ``` c
 #include <stdio.h>
 #include "lua.h"
@@ -233,6 +250,7 @@ int main(void)
 ```
 
 编译、运行：
+
 ``` shell
 $ cc -o stack_test stack_test.c -I /usr/local/include/ -L /usr/local/lib/ -llua
 $ ./stack_test
@@ -250,4 +268,5 @@ true 100 100
 ```
 
 ## 总结
+
 现在，你可以完成一个独立的 Lua 解释器编写工作，并在解释器程序中，运行一些基础的 Lua 脚本程序。你还需要了解 Lua 的栈是什么，如何使用堆栈操作来实现数据操作。下一步，将介绍如何在 C 程序中调用 Lua 脚本。
