@@ -175,7 +175,7 @@ print(shelfFile['cats'])    # ['Zophie', 'Pooka', 'Simon']
 shelfFile.close()
 ```
 
-## shutil 模块
+### shutil 模块
 shutil（或称为 shell 工具）模块中包含一些函数，让你在 Python 程序中复制、移动、改名和删除文件。
 要使用 shutil 的函数，首先需要 `import shutil`。
 
