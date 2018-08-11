@@ -157,7 +157,7 @@ function Sequence:ctor()
     self.index = 1
 end
 
-local function reset()
+local function reset(self)
     self.index = 1
 end
 
@@ -217,6 +217,9 @@ local Parallel = class('Parallel', Composite)
 
 function Parallel:ctor(opts)
     self.policy = opts and opts.policy or FAIL_ON_ONE
+    self.waits = {}
+    self.succ = 0
+    self.fail = 0
 end
 
 local function reset(self)
