@@ -2,10 +2,10 @@
 title: 关于我
 date: 2017-02-17 15:41:01
 type: "about"
-comments: false
+comments: true
 ---
 
-这是一个使用 [Hexo](https://hexo.io/) 构建的个人技术博客，这是一个快速、简洁且高效的博客框架，主题使用的是 [NexT](https://github.com/iissnan/hexo-theme-next)，本博客托管于 [GitHub](https://github.com/Veinin/blog)。
+这是一个使用 [Hexo](https://hexo.io/) 构建的个人技术博客，Hexo 是一个快速、简洁且高效的博客框架，主题使用的是 [NexT](https://github.com/iissnan/hexo-theme-next)，本博客托管于 [GitHub](https://github.com/Veinin/blog)。
 
 ## 标签
 
@@ -19,6 +19,7 @@ comments: false
 煮饭，享受一群人为你剥蒜的乐趣。
 旅游，读万卷书不如行万里路。
 
-## 邮箱
+## 联系方式
 
-veininguo@gmail.com
+邮箱：veininguo@gmail.com
+GitHub：https://github.com/veinin
