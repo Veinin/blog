@@ -1,8 +1,8 @@
 ---
 title: 寻路算法揭秘（1）：通用搜索
 date: 2019-02-18 21:13:37
-categories: 多人游戏
-tags: [多人游戏, 多人游戏网络同步]
+categories: 寻路算法
+tags: [寻路算法, A*]
 ---
 
 ## 介绍
@@ -178,7 +178,9 @@ function build_path (to_node):
 下面是一个在线演示和上面算法的实现示例。`choose_node` 只是一个随机选择的节点。你可以一步步的运行它，并查看 `可达(reachable)` 和 `已探索(explored)` 节点的变化情况，以及 `前驱(previous)` 节点的连接情况。
 
 <script src="http://www.gabrielgambetta.com/js/path_helpers.js"></script>
-<table><tr><td width="201" height="201"><canvas width="201" height="201" id="demo"></canvas></td><td><p id="reachable" style="color:green; font-family:courier;">reachable = []</p><p id="explored" style="color:red; font-family:courier;">explored = []</p><p id="path" style="font-family:courier;"></p><p><input type="button" value="Restart" onclick="stopRunSearch(); search.reset();"></input> <input type="button" value="Step"onclick="stopRunSearch(); search.step();"></input> <input type="button" value="Run" onclick="runSearch();"></input></p></td></tr></table>
+
+<table><tr><td><canvas width="201" height="201" id="demo"></canvas></td><td><p id="reachable" style="color:green; font-family:courier;">reachable = []</p><p id="explored" style="color:red; font-family:courier;">explored = []</p><p id="path" style="font-family:courier;"></p><p><input type="button" value="Restart" onclick="stopRunSearch(); search.reset();"></input> <input type="button" value="Step" onclick="stopRunSearch(); search.step();"></input> <input type="button" value="Run" onclick="runSearch();"></input></p></td></tr></table>
+
 <script>
 // Choose a random node from the reachable list.
 Search.prototype.chooseNode = function() {
@@ -217,3 +219,13 @@ render(search);
 那么，你知道是什么使得每一种寻路算法彼此都不相同吗？为什么 `A*` 叫做 `A*`。
 
 这里有个小提示：如果你多次运行上面的演示搜索，你会发现算法每次找到的路径并不一定总是相同。它找到了一些其他路径，但其并不是最短路径，为什么？
+
+---
+
+* 系列文章目录：
+  * [寻路算法揭秘（1）：通用搜索](/2019/02/18/pathfinding-demystified-01/)
+  * [寻路算法揭秘（2）：搜索策略](/2019/02/20/pathfinding-demystified-02/)
+  * [寻路算法揭秘（3）：A* 解密](/2019/02/23/pathfinding-demystified-03/)
+  * [寻路算法揭秘（4）：实用 A* 算法](/2019/02/28/pathfinding-demystified-04/)
+
+* [翻译原文](http://www.gabrielgambetta.com/generic-search.html)
